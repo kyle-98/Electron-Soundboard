@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bricked Up Soundboard</title>
+    <link rel="stylesheet" href="resources/css/main_style.css">
+</head>
+<body>
+    <h1>bricked up</h1>
+    <button id="settings-button">Open Settings</button>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content" id="modal-content">
+            <span class="close-button" id="close-settings">&times;</span>
+            <div id="settings-modal-body"></div> 
+        </div>
+    </div>
+
+    <ul id="mp3-list" class="mp3-list">Edit folder path in settings</ul>
+    <button id="play-button">Play</button>
+    <button id="stop-button">Stop</button>
+    <div>
+        <label for="local-volume-slider">Your Volume: </label>
+        <input type="range" id="local-volume-slider" min="0" max="1" step="0.01" value="0.5">
+    </div>
+    <div>
+        <label for="output-volume-slider">Others' Volume: </label>
+        <input type="range" id="output-volume-slider" min="0" max="1" step="0.01" value="0.5">
+    </div>
+    <label for="progress-bar">Sound Progress: </label>
+    <progress id="progress-bar" value="0" max="100"></progress>
+
+    <script src="./resources/js/renderer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    <script src="./resources/js/notification.js"></script>
+</body>
+</html>
