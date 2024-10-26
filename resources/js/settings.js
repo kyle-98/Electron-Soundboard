@@ -4,16 +4,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const folderPathDisplay = document.getElementById('folder-path-display');
 
     // Load the existing config
-    const config = await window.electron.config.get();
+    const config = await window.erm.config.get();
     folderPathDisplay.innerText = config.mp3Folder || 'No folder selected';
 
     // Handle folder selection
     folderButton.addEventListener('click', async () => {
-        const result = await window.electron.dialog.openFolder();
+        const result = await window.erm.dialog.openFolder();
         if (!result.canceled && result.filePaths.length > 0) {
             const folderPath = result.filePaths[0];
             folderPathDisplay.innerText = folderPath;
-            await window.electron.config.set('mp3Folder', folderPath);
+            await window.erm.config.set('mp3Folder', folderPath);
         }
     });
 

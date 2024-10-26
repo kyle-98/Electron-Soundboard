@@ -4,17 +4,34 @@ let currentSound;
 let updateInterval;
 const progressBar = document.getElementById('progress-bar');
 
+// Load settings from config.json on initialization
+let config;
+
+
 //create a new sound based on the passed filepath and start playing it
 async function playSound(filepath){
     if(currentSound) {
         currentSound.stop();
     }
 
+    //handle public facing sound
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const outputDeviceID = devices.find(device => device.kind === 'audiooutput' && device.label.includes(config.publicOutputDeviceLabel));
+    const audioElement = new Audio(filepath);
+    await audioElement.setSinkId(outputDeviceID.deviceId);
+    const publicAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+
     currentSound = new Howl({
         src: [filepath],
-        volume: 0.4,
+        volume: 1,
         onplay: () => {
             startProgressBarUpdate();
+            // Create a MediaElementAudioSourceNode for the public sound
+            const sourceNode = publicAudioContext.createMediaElementSource(audioElement);
+
+            // Connect the source node to Voicemeeter's Stereo Input 2
+            sourceNode.connect(publicAudioContext.destination);
+
             console.log(`Playing: ${filepath}`);
         },
         onend: () => {
@@ -26,7 +43,14 @@ async function playSound(filepath){
         }
     });
 
-    currentSound.play();
+    audioElement.play().catch((error) => {
+        console.error('Error playing public facing audio:', error);
+    });
+
+
+    //handle local audio sound
+
+    //currentSound.play();
 }
 
 //stop playing the current sound if one is playing
@@ -59,6 +83,7 @@ function startProgressBarUpdate() {
     }, 100);
 }
 
+
 //handle events that need to happen ONLY after the DOM content loads
 document.addEventListener('DOMContentLoaded', async () => {
     const settingsButton = document.getElementById('settings-button');
@@ -67,9 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalContent = document.getElementById('modal-content');
     const localVolumeSlider = document.getElementById('local-volume-slider');
     const outputVolumeSlider = document.getElementById('output-volume-slider');
-
-    // Load settings from config.json on initialization
-    let config;
     try {
         const response = await fetch('./config.json');
         config = await response.json();
@@ -77,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error loading config:', error);
         config = {};
     }
-
+    
     // SETTINGS BUTTON EVENTS
     settingsButton.addEventListener('click', async () => {
         try {
@@ -96,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const selectFolderButton = modalBody.querySelector('#select-folder-button');
             if (selectFolderButton) {
                 selectFolderButton.addEventListener('click', async () => {
-                    const folderPath = await window.electron.selectFolder();
+                    const folderPath = await window.erm.selectFolder();
                     if (folderPath) {
                         selectedFolderPathDisplay.textContent = folderPath; // Update the display
                     }
@@ -110,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const mp3Folder = selectedFolderPathDisplay.textContent;
 
                     // Save settings to config.json
-                    await window.electron.saveSettings({ key: 'mp3Folder', value: mp3Folder });
+                    await window.erm.saveSettings({ key: 'mp3Folder', value: mp3Folder });
                     
                     showNotification('Settings saved successfully', '#40b35e');
                 });
@@ -134,7 +156,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const mp3ListDisplay = document.getElementById('mp3-list'); // Ensure you have an element with this ID to display the list
     // Function to fetch and display MP3 files
     async function loadMP3Files(folderPath) {
-        const mp3Files = await window.electron.getMP3Files(folderPath);
+        const mp3Files = await window.erm.getMP3Files(folderPath);
         if (mp3Files && mp3Files.length > 0) {
             mp3ListDisplay.innerHTML = mp3Files.map(file => `<li>${file}</li>`).join(''); // Populate the list with MP3 files
             mp3ListDisplay.addEventListener('click', (event) => {

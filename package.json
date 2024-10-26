@@ -13,7 +13,8 @@
     "electron": "^33.0.1",
     "electron-builder": "^25.1.8",
     "electron-package": "^0.1.0",
-    "electron-reload": "^2.0.0-alpha.1"
+    "electron-reload": "^2.0.0-alpha.1",
+    "voicemeeter-remote": "^0.5.0"
   },
   "dependencies": {
     "ffmpeg-static": "^5.2.0",

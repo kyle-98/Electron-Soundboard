@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const showNotification = require('./resources/js/notification').default
 
 let mainWindow;
 const configPath = path.join(__dirname, 'config.json');
@@ -11,7 +12,7 @@ function loadConfig() {
         const data = fs.readFileSync(configPath);
         return JSON.parse(data);
     }
-    return { mp3Folder: '' }; // Default config
+    return { mp3Folder: '', publicOutputDeviceLabel: '' }; // Default config
 }
 
 // Function to save the configuration
@@ -20,7 +21,7 @@ function saveConfig(config) {
 }
 
 // Create the main window
-function createWindow() {
+async function createWindow() {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
@@ -33,6 +34,13 @@ function createWindow() {
     });
 
     mainWindow.loadFile('index.html');
+
+    // await voicemeeter.init().then(() => {
+    //     voicemeeter.login();
+    //     console.log('Successfully logged into voicemeeter api');
+    // }).catch((error) => {
+    //     console.log(`Failed to initalize voicemeeter api call: ${error}`);
+    // });
 }
 
 // IPC handler for folder dialog
@@ -67,7 +75,10 @@ ipcMain.handle('config:set', (event, key, value) => {
     saveConfig(config);
 });
 
-app.whenReady().then(createWindow);
+
+app.whenReady().then(() => { 
+    createWindow();
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
