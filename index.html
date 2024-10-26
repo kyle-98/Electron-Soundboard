@@ -18,19 +18,31 @@
         </div>
     </div>
 
+    <div>
+        <button id="fav-button">Save as Favorite</button>
+        <span id="fav-sound" style="margin-left: 10px;"></span>
+    </div>
+
     <ul id="mp3-list" class="mp3-list">Edit folder path in settings</ul>
     <button id="play-button">Play</button>
     <button id="stop-button">Stop</button>
-    <div>
-        <label for="local-volume-slider">Your Volume: </label>
-        <input type="range" id="local-volume-slider" min="0" max="1" step="0.01" value="1">
+    <div class="slider-container">
+        <label for="local-volume-slider">Your Volume:</label>
+        <input type="range" id="local-volume-slider" min="0" max="1" step="0.01" value="1" class="volume-slider">
     </div>
-    <div>
-        <label for="output-volume-slider">Others' Volume: </label>
-        <input type="range" id="output-volume-slider" min="0" max="1" step="0.01" value="1">
+    
+    <div class="slider-container">
+        <label for="output-volume-slider">Others' Volume:</label>
+        <input type="range" id="output-volume-slider" min="0" max="1" step="0.01" value="1" class="volume-slider">
     </div>
-    <label for="progress-bar">Sound Progress: </label>
-    <progress id="progress-bar" value="0" max="100"></progress>
+      
+    <!-- <label for="progress-bar">Sound Progress: </label>
+    <progress id="progress-bar" value="0" max="100"></progress> -->
+
+    <label for="progress-bar">Sound Progress:</label>
+    <div class="progress-container">
+        <input type="range" id="progress-bar" value="0" max="100" class="progress-slider">
+    </div>
 
     <script src="./resources/js/renderer.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>

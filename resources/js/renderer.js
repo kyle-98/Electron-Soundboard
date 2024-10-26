@@ -5,13 +5,12 @@ let localSound;
 let updateInterval;
 let localVolume;
 let publicVolume;
-const progressBar = document.getElementById('progress-bar');
-const audioElement = new Audio();
 let localVolumeSlider;
 let outputVolumeSlider;
+var config;
 
-// Load settings from config.json on initialization
-let config;
+const progressBar = document.getElementById('progress-bar');
+const audioElement = new Audio();
 
 //create a new sound based on the passed filepath and start playing it
 async function playSound(filepath){
@@ -116,6 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         config = {};
     }
 
+
     // SETTINGS BUTTON EVENTS
     settingsButton.addEventListener('click', async () => {
         try {
@@ -151,7 +151,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     .filter(device => device.kind === "audiooutput")
                     .forEach(device => {
                         const option = document.createElement("option");
-                        console.log(device.deviceId, device.label);
                         option.value = device.deviceId;
                         option.textContent = device.label;
                         audioDeviceDropdown.appendChild(option);
@@ -164,8 +163,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             await loadAudioDevices();
 
             const setSelectedDevice = async () => {
-                const config = await window.erm.config.get();
-                const savedDeviceId = config.publicOutputDeviceId;
+                const cConfig = await window.erm.config.get();
+                const savedDeviceId = cConfig.publicOutputDeviceId;
                 
                 if (savedDeviceId) {
                     audioDeviceDropdown.value = savedDeviceId;
@@ -200,6 +199,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    //FAVORITE A SOUND
+    const favButton = document.getElementById('fav-button');
+    const favSoundDisplay = document.getElementById('fav-sound');
+    favButton.addEventListener('click', async () => {
+        const selectedMP3Name = mp3ListDisplay.querySelector('li.selected');
+        const mp3FileName = selectedMP3Name.textContent;
+        if(selectedMP3Name){
+            const fullPath = `${config.mp3Folder}\\${mp3FileName}`;
+            favSoundDisplay.textContent = mp3FileName;
+            window.erm.config.set('favoriteSound', fullPath);
+            config = await window.erm.config.get();
+        }
+    });
+
+    //set display of favorite text
+    favSoundDisplay.textContent = config.favoriteSound.split('\\').at(-1) || 'Select a favorite sound';
+
+    //play favorite sound when global keybinds are pressed
+    window.erm.playFavSound(() => {
+        if(config.favoriteSound != ''){
+            playSound(config.favoriteSound);
+        }
+    });
 
     // DISPLAY MP3 FILES EVENTS
     const mp3ListContainer = document.getElementById('mp3-list');

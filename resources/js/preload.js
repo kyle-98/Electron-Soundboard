@@ -15,4 +15,5 @@ contextBridge.exposeInMainWorld('erm', {
     selectFolder: () => ipcRenderer.invoke('dialog:openFolder'),
     saveSettings: (settings) => ipcRenderer.invoke('config:set', settings.key, settings.value),
     getMP3Files: (directoryPath) => ipcRenderer.invoke('mp3:getFiles', directoryPath),
+    playFavSound: (callback) => ipcRenderer.on('play-fav-sound', callback)
 });

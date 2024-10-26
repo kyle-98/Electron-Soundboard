@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, globalShortcut } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const showNotification = require('./resources/js/notification').default
@@ -12,7 +12,7 @@ function loadConfig() {
         const data = fs.readFileSync(configPath);
         return JSON.parse(data);
     }
-    return { mp3Folder: '', publicOutputDeviceLabel: '' }; // Default config
+    return { mp3Folder: '', publicOutputDeviceLabel: '', favoriteSound: ''}; // Default config
 }
 
 // Function to save the configuration
@@ -35,12 +35,9 @@ async function createWindow() {
 
     mainWindow.loadFile('index.html');
 
-    // await voicemeeter.init().then(() => {
-    //     voicemeeter.login();
-    //     console.log('Successfully logged into voicemeeter api');
-    // }).catch((error) => {
-    //     console.log(`Failed to initalize voicemeeter api call: ${error}`);
-    // });
+    globalShortcut.register('Control+F12', () => {
+        mainWindow.webContents.send('play-fav-sound');
+    });
 }
 
 // IPC handler for folder dialog
@@ -75,7 +72,6 @@ ipcMain.handle('config:set', (event, key, value) => {
     saveConfig(config);
 });
 
-
 app.whenReady().then(() => { 
     createWindow();
 });
@@ -84,6 +80,10 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
+});
+
+app.on('will-quit', () => {
+    globalShortcut.unregisterAll();
 });
 
 app.on('activate', () => {
