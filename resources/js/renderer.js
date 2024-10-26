@@ -1,37 +1,58 @@
 // resources/js/renderer.js
 let selectedMp3Path = '';
-let currentSound;
+let publicSound;
+let localSound;
 let updateInterval;
+let localVolume;
+let publicVolume;
 const progressBar = document.getElementById('progress-bar');
+const audioElement = new Audio();
+let localVolumeSlider;
+let outputVolumeSlider;
 
 // Load settings from config.json on initialization
 let config;
 
-
 //create a new sound based on the passed filepath and start playing it
 async function playSound(filepath){
-    if(currentSound) {
-        currentSound.stop();
+    if(localSound) {
+        stopSound();
     }
 
     //handle public facing sound
     const devices = await navigator.mediaDevices.enumerateDevices();
     const outputDeviceID = devices.find(device => device.kind === 'audiooutput' && device.label.includes(config.publicOutputDeviceLabel));
-    const audioElement = new Audio(filepath);
+    audioElement.src = filepath;
     await audioElement.setSinkId(outputDeviceID.deviceId);
     const publicAudioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-    currentSound = new Howl({
+    //update currently set volumes
+    localVolume = parseFloat(localVolumeSlider.value);
+    publicVolume = parseFloat(outputVolumeSlider.value);
+
+    publicSound = new Howl({
         src: [filepath],
-        volume: 1,
+        volume: publicVolume,
         onplay: () => {
-            startProgressBarUpdate();
             // Create a MediaElementAudioSourceNode for the public sound
             const sourceNode = publicAudioContext.createMediaElementSource(audioElement);
 
             // Connect the source node to Voicemeeter's Stereo Input 2
             sourceNode.connect(publicAudioContext.destination);
+        }
+    });
 
+    audioElement.play().catch((error) => {
+        console.error('Error playing public audio:', error); //TODO: log this to an in app notification later
+    });
+
+
+    //handle local audio sound
+    localSound = new Howl({
+        src: [filepath],
+        volume: localVolume,
+        onplay: () => {
+            startProgressBarUpdate();
             console.log(`Playing: ${filepath}`);
         },
         onend: () => {
@@ -42,24 +63,15 @@ async function playSound(filepath){
             console.log(`Stopping: ${filepath}`);
         }
     });
-
-    audioElement.play().catch((error) => {
-        console.error('Error playing public facing audio:', error);
-    });
-
-
-    //handle local audio sound
-
-    //currentSound.play();
+    localSound.play();
 }
 
 //stop playing the current sound if one is playing
-async function stopSound(sound){ 
-    if(sound){
-        sound.stop();
-        stopProgressBarUpdate();
-        resetProgressBar();
-    }
+async function stopSound(){ 
+    localSound.stop();
+    audioElement.pause();
+    stopProgressBarUpdate();
+    resetProgressBar();
 }
 
 //stop the progressbar from updating
@@ -74,9 +86,9 @@ function resetProgressBar() {
 
 function startProgressBarUpdate() {
     updateInterval = setInterval(() => {
-        if(currentSound && currentSound.playing()){
-            const seek = currentSound.seek();
-            const duration = currentSound.duration();
+        if(localSound && localSound.playing()){
+            const seek = localSound.seek();
+            const duration = localSound.duration();
             const progress = (seek / duration) * 100;
             progressBar.value = progress;
         }
@@ -90,8 +102,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalBody = document.getElementById('settings-modal-body');
     const settingsModal = document.getElementById('settings-modal'); 
     const modalContent = document.getElementById('modal-content');
-    const localVolumeSlider = document.getElementById('local-volume-slider');
-    const outputVolumeSlider = document.getElementById('output-volume-slider');
+    localVolumeSlider = document.getElementById('local-volume-slider');
+    outputVolumeSlider = document.getElementById('output-volume-slider');
+    
+    //fetch audio levels
+    localVolume = parseFloat(localVolumeSlider.value);
+    publicVolume = parseFloat(outputVolumeSlider.value);
+
     try {
         const response = await fetch('./config.json');
         config = await response.json();
@@ -99,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error loading config:', error);
         config = {};
     }
-    
+
     // SETTINGS BUTTON EVENTS
     settingsButton.addEventListener('click', async () => {
         try {
@@ -198,17 +215,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     const stopButton = document.getElementById('stop-button');
     if(stopButton){
         stopButton.addEventListener('click', () => {
-            if(currentSound){
-                stopSound(currentSound);
-            }
+            stopSound();
         });
     }
 
-    //ADJUST VOLUME
+    //ADJUST LOCAL VOLUME
     localVolumeSlider.addEventListener('input', (event) => {
-        const volumeValue = event.target.value / 100;
-        if(currentSound) {
-            currentSound.volume(volumeValue);
+        const volumeValue = event.target.value;
+        if(localSound) {
+            localSound.volume(volumeValue);
+        }
+    });
+
+    //ADJUST PUBLIC VOLUME
+    outputVolumeSlider.addEventListener('input', (event) => {
+        const volumeValue = event.target.value;
+        if(audioElement) {
+            audioElement.volume = volumeValue;
         }
     });
 
@@ -216,10 +239,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     progressBar.addEventListener('click', (event) => {
         const progressWidth = progressBar.offsetWidth;
         const clickX = event.offsetX;
-        const duration = currentSound.duration();
-        const newTime = (clickX / progressWidth) * duration;
-        currentSound.seek(newTime);
+
+        //handle public audio
+        var duration = audioElement.currentTime;
+        var newTime = (clickX / progressWidth) * duration;
+        audioElement.currentTime = newTime;
+
+        //handle local audio
+        duration = localSound.duration();
+        newTime = (clickX / progressWidth) * duration;
+        localSound.seek(newTime);
     });
-
-
 });
