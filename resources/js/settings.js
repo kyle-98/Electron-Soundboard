@@ -17,7 +17,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    saveButton.addEventListener('click', async () => {
-        alert('Settings saved!');
-    });
 });

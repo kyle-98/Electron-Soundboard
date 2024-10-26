@@ -21,9 +21,8 @@ async function playSound(filepath){
 
     //handle public facing sound
     const devices = await navigator.mediaDevices.enumerateDevices();
-    const outputDeviceID = devices.find(device => device.kind === 'audiooutput' && device.label.includes(config.publicOutputDeviceLabel));
     audioElement.src = filepath;
-    await audioElement.setSinkId(outputDeviceID.deviceId);
+    await audioElement.setSinkId(config.publicOutputDeviceId);
     const publicAudioContext = new (window.AudioContext || window.webkitAudioContext)();
 
     //update currently set volumes
@@ -142,6 +141,39 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
 
+            const audioDeviceDropdown = document.getElementById("audio-device-dropdown");
+            const loadAudioDevices = async () => {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                
+                    // Filter and add audio input devices to the dropdown
+                    devices
+                    .filter(device => device.kind === "audiooutput")
+                    .forEach(device => {
+                        const option = document.createElement("option");
+                        console.log(device.deviceId, device.label);
+                        option.value = device.deviceId;
+                        option.textContent = device.label;
+                        audioDeviceDropdown.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error("Failed to load audio devices:", error);
+                }
+            };
+
+            await loadAudioDevices();
+
+            const setSelectedDevice = async () => {
+                const config = await window.erm.config.get();
+                const savedDeviceId = config.publicOutputDeviceId;
+                
+                if (savedDeviceId) {
+                    audioDeviceDropdown.value = savedDeviceId;
+                }
+            };
+
+            await setSelectedDevice();
+
             // Add event listener for the save settings button
             const saveButton = modalBody.querySelector('#save-settings-button');
             if (saveButton) {
@@ -150,6 +182,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     // Save settings to config.json
                     await window.erm.saveSettings({ key: 'mp3Folder', value: mp3Folder });
+                    await window.erm.config.set('publicOutputDeviceId', audioDeviceDropdown.value)
                     
                     showNotification('Settings saved successfully', '#40b35e');
                 });
