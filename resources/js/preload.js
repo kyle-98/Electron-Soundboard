@@ -1,5 +1,4 @@
 const { contextBridge, ipcRenderer } = require('electron');
-const voicemeeter = require('voicemeeter-remote');
 
 // Expose methods to the renderer process
 contextBridge.exposeInMainWorld('erm', {

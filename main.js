@@ -4,7 +4,7 @@ const fs = require('fs');
 const showNotification = require('./resources/js/notification').default
 
 let mainWindow;
-const configPath = path.join(__dirname, 'config.json');
+const configPath = './config.json';
 
 // Function to load the configuration
 function loadConfig() {
@@ -23,8 +23,8 @@ function saveConfig(config) {
 // Create the main window
 async function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 855,
+        height: 650,
         webPreferences: {
             preload: path.join(__dirname, 'resources', 'js', 'preload.js'),
             contextIsolation: true,
@@ -52,7 +52,8 @@ ipcMain.handle('dialog:openFolder', async () => {
 ipcMain.handle('mp3:getFiles', async (event, directoryPath) => {
     try {
         const files = fs.readdirSync(directoryPath);
-        const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3');
+        const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3' ||  path.extname(file).toLowerCase() === '.wav');
+        console.log(mp3Files);
         return mp3Files;
     } catch (error) {
         console.error('Error reading directory:', error);

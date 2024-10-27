@@ -3,8 +3,34 @@
   "productName": "Professional Soundboard",
   "version": "1.0.0",
   "main": "main.js",
+  "icon": "./images/soundboard.ico",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "builder":{
+    "appId": "com.erm.professionalsoundboard",
+    "files": [
+      "dist/**/*",
+      "./images/soundboard.ico"
+    ],
+    "extraResources":[
+      {
+        "filter": ["./config.json"]
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "./images/soundboard.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./images/soundboard.ico",
+      "uninstallerIcon": "./images/soundboard.ico",
+      "allowElevation": true
+    }
   },
   "keywords": [],
   "author": "",
@@ -14,8 +40,7 @@
     "electron": "^33.0.1",
     "electron-builder": "^25.1.8",
     "electron-package": "^0.1.0",
-    "electron-reload": "^2.0.0-alpha.1",
-    "voicemeeter-remote": "^0.5.0"
+    "electron-reload": "^2.0.0-alpha.1"
   },
   "dependencies": {
     "ffmpeg-static": "^5.2.0",
