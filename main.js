@@ -53,7 +53,6 @@ ipcMain.handle('mp3:getFiles', async (event, directoryPath) => {
     try {
         const files = fs.readdirSync(directoryPath);
         const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3' ||  path.extname(file).toLowerCase() === '.wav');
-        console.log(mp3Files);
         return mp3Files;
     } catch (error) {
         console.error('Error reading directory:', error);

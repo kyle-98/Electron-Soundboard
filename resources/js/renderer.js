@@ -250,8 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // DISPLAY MP3 FILES EVENTS
-    const mp3ListContainer = document.getElementById('mp3-list');
-    const mp3ListDisplay = document.getElementById('mp3-list'); // Ensure you have an element with this ID to display the list
+    const mp3ListDisplay = document.getElementById('mp3-list'); 
     // Function to fetch and display MP3 files
     async function loadMP3Files(folderPath) {
         const mp3Files = await window.erm.getMP3Files(folderPath);
@@ -338,4 +337,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         newTime = (clickX / progressWidth) * duration;
         localSound.seek(newTime);
     });
+
+    //SEARCH SOUNDS
+    const searchBar = document.getElementById('search-sounds');
+    if(searchBar){
+        searchBar.addEventListener('input', () => {
+            const filter = searchBar.value.toLowerCase();
+            const mp3ListItems = document.querySelectorAll('#mp3-list li');
+            let hasItems = false;
+            mp3ListItems.forEach(function(item) {
+                const text = item.textContent.toLowerCase();
+                if(text.includes(filter)){
+                    item.style.display = '';
+                    hasItems = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            if(!hasItems){
+                showNotification('No sounds found.', '#cf5151');
+            }
+        });
+    }
+
+
 });

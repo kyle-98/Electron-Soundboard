@@ -31,10 +31,32 @@ body {
 
 .body-top-buttons {
     display: flex;
-    flex-direction: row-reverse;
     justify-content: space-between;
 }
 
+#search-sounds {
+    max-width: 400px;
+    color: var(--main-text-color);
+    background-color: var(--secondary-background-color);
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    font-size: 12.5px;
+    border: 2px solid var(--accent-color);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+  
+#search-sounds:focus {
+    border-color: #4A90E2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+  
+#search-sounds::placeholder {
+    color: var(--accent-color);
+    font-style: italic;
+}
 
 .main-button {
     padding: 12px 24px; 
@@ -52,7 +74,12 @@ body {
 .main-button:hover  {
     background-color: var(--primary-button-hover-color);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); 
-  }
+}
+
+.settings-bar {
+    display: flex;
+    justify-content: right;
+}
 
 .modal {
     display: none; 
