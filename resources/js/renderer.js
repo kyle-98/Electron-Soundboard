@@ -7,7 +7,9 @@ let localVolume;
 let publicVolume;
 let localVolumeSlider;
 let outputVolumeSlider;
+
 var config;
+var selectedTheme;
 
 const progressBar = document.getElementById('progress-bar');
 const audioElement = new Audio();
@@ -114,6 +116,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error loading config:', error);
         config = {};
     }
+    selectedTheme = config.applicationTheme;
+    document.documentElement.setAttribute('app-theme', selectedTheme);
 
 
     // SETTINGS BUTTON EVENTS
@@ -157,6 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     });
                 } catch (error) {
                     console.error("Failed to load audio devices:", error);
+                    showNotification(`Failed to load audio devices: ${error}`, '#cf5151');
                 }
             };
 
@@ -173,16 +178,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             await setSelectedDevice();
 
+            //select application theme
+            const appThemeDropdown = modalBody.querySelector('#app-theme-dropdown');
+            if(appThemeDropdown){
+                appThemeDropdown.addEventListener('change', (event) => {
+                    selectedTheme = event.target.value;
+                    document.documentElement.setAttribute('app-theme', selectedTheme);
+                });
+            }
+
+            //set current application theme from config
+            appThemeDropdown.value = config.applicationTheme;
+
+
             // Add event listener for the save settings button
             const saveButton = modalBody.querySelector('#save-settings-button');
             if (saveButton) {
                 saveButton.addEventListener('click', async () => {
                     const mp3Folder = selectedFolderPathDisplay.textContent;
-
                     // Save settings to config.json
-                    await window.erm.saveSettings({ key: 'mp3Folder', value: mp3Folder });
+                    await window.erm.config.set('mp3Folder', mp3Folder)
                     await window.erm.config.set('publicOutputDeviceId', audioDeviceDropdown.value)
-                    
+                    await window.erm.config.set('applicationTheme', selectedTheme);
+                    config = await window.erm.config.get();
                     showNotification('Settings saved successfully', '#40b35e');
                 });
             }
@@ -190,6 +208,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const closeButton = modalContent.querySelector('#close-settings');
             if (closeButton) {
                 closeButton.addEventListener('click', () => {
+                    let configTheme = config.applicationTheme;
+                    if (configTheme != selectedTheme){
+                        selectedTheme = configTheme;
+                        document.documentElement.setAttribute('app-theme', selectedTheme);
+                        showNotification('Theme settings not saved', '#cf5151')
+                    }
                     settingsModal.style.display = 'none';
                 });
             }
@@ -204,12 +228,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const favSoundDisplay = document.getElementById('fav-sound');
     favButton.addEventListener('click', async () => {
         const selectedMP3Name = mp3ListDisplay.querySelector('li.selected');
-        const mp3FileName = selectedMP3Name.textContent;
         if(selectedMP3Name){
+            const mp3FileName = selectedMP3Name.textContent;
             const fullPath = `${config.mp3Folder}\\${mp3FileName}`;
             favSoundDisplay.textContent = mp3FileName;
             window.erm.config.set('favoriteSound', fullPath);
             config = await window.erm.config.get();
+        } else {
+            showNotification('No sound selected to favorite', '#cf5151');
         }
     });
 
@@ -277,17 +303,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     //ADJUST LOCAL VOLUME
     localVolumeSlider.addEventListener('input', (event) => {
         const volumeValue = event.target.value;
+        const volumePercent = document.getElementById('local-volume-slider-percent');
         if(localSound) {
             localSound.volume(volumeValue);
         }
+        volumePercent.textContent = String(Math.round(volumeValue * 100)) + '%';
+        
+        //set percentage label
+
     });
 
     //ADJUST PUBLIC VOLUME
     outputVolumeSlider.addEventListener('input', (event) => {
         const volumeValue = event.target.value;
+        const volumePercent = document.getElementById('output-volume-slider-percent');
         if(audioElement) {
             audioElement.volume = volumeValue;
         }
+        volumePercent.textContent = String(Math.round(volumeValue * 100)) + '%';
     });
 
     //ALLOW SEEKING

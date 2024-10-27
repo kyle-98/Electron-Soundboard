@@ -1,14 +1,58 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0px 20px 5px;
-    background-color: #f5f5f5;
+:root {
+    --background-color: #f5f5f5;
+    --secondary-background-color: white;
+    --main-text-color: black;
+    --accent-color: #aaa;
+    --primary-button-color: #55a2e5;
+    --primary-button-hover-color: #3c6e9b;
+    --primary-blue-shadow: 0 0 0 4px rgba(60, 110, 155, 0.2);
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 16px;
+[app-theme="dark"] {
+    --background-color: #1e1e1e;
+    --secondary-background-color: rgb(56, 56, 56);
+    --main-text-color: #f5f5f5;
+    --accent-color: #e7e7e7;
+    --primary-blue-shadow: 0 0 0 4px rgba(83, 175, 255, 0.2);
 }
+
+body {
+    font-family: Arial, sans-serif;
+    color: var(--main-text-color);
+    margin: 0;
+    padding: 0px 20px 5px;
+    background-color: var(--background-color);
+}
+
+.body-header {
+    display: flex;
+    justify-content: space-around;
+}
+
+.body-top-buttons {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
+
+.main-button {
+    padding: 12px 24px; 
+    border: none; 
+    border-radius: 8px; 
+    background-color: var(--primary-button-color); 
+    color: white; 
+    font-size: 16px; 
+    font-weight: 300; 
+    cursor: pointer; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    transition: all 0.2s ease-in-out; 
+}
+
+.main-button:hover  {
+    background-color: var(--primary-button-hover-color);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); 
+  }
 
 .modal {
     display: none; 
@@ -19,21 +63,20 @@ button {
     width: 100%; 
     height: 100%; 
     overflow: auto; 
-    background-color: rgb(0,0,0); 
     background-color: rgba(0,0,0,0.4); 
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: var(--background-color);
     margin: 15% auto; 
     padding: 20px;
-    border: 1px solid #888;
     width: 80%; 
     max-height: 80%; 
+    border-radius: 10px;
 }
 
 .close-button {
-    color: #aaa;
+    color: var(--accent-color);
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -41,7 +84,7 @@ button {
 
 .close-button:hover,
 .close-button:focus {
-    color: black;
+    color: var(--main-text-color);
     text-decoration: none;
     cursor: pointer;
 }
@@ -54,7 +97,7 @@ button {
     width: 100%;
     background-color: green; 
     color: white;
-    padding: 0px !important;
+    padding: 5px 0px 5px 0px !important;
     display: none;
     justify-content: space-between;
     align-items: center;
@@ -87,10 +130,10 @@ button {
     padding: 0;
     max-height: 300px; 
     overflow-y: auto; 
-    border: 1px solid #ccc; 
-    border-radius: 8px; 
+    border: 1px solid var(--accent-color); 
+    border-radius: 5px; 
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #fff; 
+    background-color: var(--secondary-background-color); 
 }
 
 .mp3-list li {
@@ -98,10 +141,11 @@ button {
     cursor: pointer; 
     transition: background-color 0.3s; 
     list-style-type: none;
+    color: var(--main-text-color);
 }
 
 .mp3-list li:hover {
-    background-color: #f0f8ff; 
+    background-color: #c1d1df; 
 }
 
 .mp3-list li.selected {
@@ -125,6 +169,17 @@ button {
     margin-top: 10px;
 }
 
+
+.sound-controls {
+    width: 60%;
+    display: flex;
+    margin-top: 20px;
+}
+
+.sound-sliders{
+    margin-left: 25px;
+}
+
 .slider-container {
     display: block;
     align-items: center;
@@ -133,20 +188,41 @@ button {
 }
 
 .volume-slider {
-    width: 20%;
     cursor: pointer;
 }
 
-progress {
-    -webkit-appearance: none; 
-    appearance: none;
-    width: 100%; 
-    height: 20px; 
-    border-radius: 10px; 
-    background: #e0e0e0; 
+.progress-container{
+    width: 50%;
 }
 
-progress::-webkit-progress-bar {
-    background: #e0e0e0; 
-    border-radius: 10px;
+#progress-bar {
+    width: 65%;
 }
+
+.select-dropdown {
+    appearance: none;
+    padding: 12px 16px; /* Padding for size */
+    border: 2px solid #ddd; /* Light border */
+    border-radius: 8px; /* Rounded corners */
+    background-color: var(--background-color); /* White background */
+    color: var(--main-text-color);
+    font-size: 16px; /* Text size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+  
+
+  /* Focus effect */
+.select-dropdown:focus {
+    outline: none; /* Remove default focus outline */
+    border-color: var(--primary-button-color); /* Change border color on focus */
+    box-shadow: var(--primary-blue-shadow); /* Add a subtle box shadow */
+}
+  
+  /* Hover effect */
+.select-dropdown:hover {
+    border-color: var(--primary-button-color); /* Border color on hover */
+}
+  
+
+  

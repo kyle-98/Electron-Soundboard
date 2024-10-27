@@ -3,10 +3,22 @@
     <label for="select-folder-button">Select a folder containing your MP3 files:</label>
     <button id="select-folder-button">Select Folder</button>
     <p id="selected-folder-path">No folder selected.</p>
+    
+    <hr>
 
     <label for="audio-device-dropdown">Select Public Sound Device:</label>
-    <select id="audio-device-dropdown"></select>
-    <br><br>
+    <select id="audio-device-dropdown" class="select-dropdown"></select>
+    
+    <hr>
+    
+    <div class="select-container">
+        <label for="app-theme-dropdown">Application Theme:</label>
+        <select id="app-theme-dropdown" class="select-dropdown">
+            <option value="light" selected>Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </div>
 
-    <button id="save-settings-button">Save Settings</button> 
+    <hr>
+    <button id="save-settings-button" class="main-button">Save Settings</button> 
 </div>

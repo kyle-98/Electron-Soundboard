@@ -3,12 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bricked Up Soundboard</title>
+    <title>🍋 Professional Soundboard</title>
     <link rel="stylesheet" href="resources/css/main_style.css">
 </head>
 <body>
-    <h1>bricked up</h1>
-    <button id="settings-button">Open Settings</button>
+    <div class="body-header">
+        <h1>Professional Soundboard</h1>
+    </div>
+
+    <div class="body-top-buttons">
+        <button id="settings-button" class="main-button">Open Settings</button>
+        <div>
+            <button id="fav-button" class="main-button">Save as Favorite</button>
+            <span id="fav-sound" style="margin-left: 10px;"></span>
+        </div>
+    </div>
 
     <!-- Settings Modal -->
     <div id="settings-modal" class="modal">
@@ -18,29 +27,36 @@
         </div>
     </div>
 
-    <div>
-        <button id="fav-button">Save as Favorite</button>
-        <span id="fav-sound" style="margin-left: 10px;"></span>
-    </div>
-
     <ul id="mp3-list" class="mp3-list">Edit folder path in settings</ul>
-    <button id="play-button">Play</button>
-    <button id="stop-button">Stop</button>
-    <div class="slider-container">
-        <label for="local-volume-slider">Your Volume:</label>
-        <input type="range" id="local-volume-slider" min="0" max="1" step="0.01" value="1" class="volume-slider">
+
+    <div class="sound-controls">
+        <div class="sound-buttons">
+            <button id="play-button" class="main-button">Play</button>
+            <button id="stop-button" class="main-button">Stop</button>
+        </div>
+        
+        <div class="sound-sliders">
+            <div class="slider-container">
+                <div style="display:flex;align-items: center;">
+                    <label for="local-volume-slider" style="width:110px;">Local Volume:</label>
+                    <input type="range" id="local-volume-slider" min="0" max="1" step="0.01" value="1" class="volume-slider">
+                    <span id="local-volume-slider-percent" style="margin-left:5px;">100%</span>
+                </div>
+            </div>
+            
+            <div class="slider-container">
+                <div style="display:flex;align-items: center;">
+                    <label for="output-volume-slider" style="width:110px;">Public Volume:</label>
+                    <input type="range" id="output-volume-slider" min="0" max="1" step="0.01" value="1" class="volume-slider" >
+                    <span id="output-volume-slider-percent" style="margin-left:5px;">100%</span>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <div class="slider-container">
-        <label for="output-volume-slider">Others' Volume:</label>
-        <input type="range" id="output-volume-slider" min="0" max="1" step="0.01" value="1" class="volume-slider">
-    </div>
       
-    <!-- <label for="progress-bar">Sound Progress: </label>
-    <progress id="progress-bar" value="0" max="100"></progress> -->
-
-    <label for="progress-bar">Sound Progress:</label>
     <div class="progress-container">
+        <label for="progress-bar">Sound Progress:</label>
         <input type="range" id="progress-bar" value="0" max="100" class="progress-slider">
     </div>
 

@@ -12,7 +12,7 @@ function loadConfig() {
         const data = fs.readFileSync(configPath);
         return JSON.parse(data);
     }
-    return { mp3Folder: '', publicOutputDeviceLabel: '', favoriteSound: ''}; // Default config
+    return { mp3Folder: '', publicOutputDeviceLabel: '', favoriteSound: '', applicationTheme: 'light'}; // Default config
 }
 
 // Function to save the configuration
