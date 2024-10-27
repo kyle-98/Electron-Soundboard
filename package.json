@@ -3,33 +3,33 @@
   "productName": "Professional Soundboard",
   "version": "1.0.0",
   "main": "main.js",
-  "icon": "./images/soundboard.ico",
+  "icon": "./resources/images/soundboard.ico",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder"
+    "start": "set NODE_ENV=development&& electron .",
+    "build": "electron-builder > build.log 2>&1"
   },
-  "builder":{
+  "build":{
     "appId": "com.erm.professionalsoundboard",
     "files": [
-      "dist/**/*",
-      "./images/soundboard.ico"
+      "./resources/**/*",
+      "./index.html",
+      "./main.js"
     ],
     "extraResources":[
-      {
-        "filter": ["./config.json"]
-      }
+      "./config.json"
     ],
     "win": {
       "target": "nsis",
-      "icon": "./images/soundboard.ico"
+      "icon": "resources/images/soundboard.ico"
     },
     "nsis": {
       "oneClick": false,
       "perMachine": true,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "./images/soundboard.ico",
-      "uninstallerIcon": "./images/soundboard.ico",
-      "allowElevation": true
+      "installerIcon": "./resources/images/close.ico",
+      "uninstallerIcon": "./resources/images/close.ico",
+      "allowElevation": false,
+      "createDesktopShortcut": false
     }
   },
   "keywords": [],

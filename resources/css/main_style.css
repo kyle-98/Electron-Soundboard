@@ -78,8 +78,14 @@ body {
 
 .settings-bar {
     display: flex;
+    padding-top: 15px;
     justify-content: right;
 }
+
+#settings-button {
+    position: absolute;
+}
+
 
 .modal {
     display: none; 

@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     publicVolume = parseFloat(outputVolumeSlider.value);
 
     try {
-        const response = await fetch('./config.json');
+        const response = await fetch(await window.erm.config.location());
         config = await response.json();
     } catch (error) {
         console.error('Error loading config:', error);

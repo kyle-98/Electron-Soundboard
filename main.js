@@ -4,7 +4,11 @@ const fs = require('fs');
 const showNotification = require('./resources/js/notification').default
 
 let mainWindow;
-const configPath = './config.json';
+const isDev = process.env.NODE_ENV === 'development';
+
+const configPath = isDev 
+    ? path.join(__dirname, 'config.json') 
+    : path.join(__dirname, '..', 'config.json');
 
 // Function to load the configuration
 function loadConfig() {
@@ -30,7 +34,9 @@ async function createWindow() {
             contextIsolation: true,
             enableRemoteModule: false,
             nodeIntegration: true,
-        }
+        },
+        autoHideMenuBar: true,
+        icon: path.join(__dirname, 'resources', 'images', 'soundboard.ico'),
     });
 
     mainWindow.loadFile('index.html');
@@ -70,6 +76,11 @@ ipcMain.handle('config:set', (event, key, value) => {
     const config = loadConfig();
     config[key] = value;
     saveConfig(config);
+    mainWindow.webContents.reload();
+});
+
+ipcMain.handle('config:location', () => {
+    return configPath;
 });
 
 app.whenReady().then(() => { 

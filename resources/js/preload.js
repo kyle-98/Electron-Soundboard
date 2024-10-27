@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('erm', {
     config: {
         get: async () => await ipcRenderer.invoke('config:get'),
         set: async (key, value) => await ipcRenderer.invoke('config:set', key, value),
+        location: async () => await ipcRenderer.invoke('config:location')
     },
     dialog: {
         openFolder: async () => {
